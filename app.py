@@ -4,7 +4,6 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
 import numpy as np
 import tensorflow as tf
-import io
 
 TF_ENABLE_ONEDNN_OPTS=0
 
@@ -21,8 +20,7 @@ class_names = {
     7: 'squamous cell carcinoma',
     8: 'vascular lesion',
 }
-height = 244
-width = 244
+
 # Load the .h5 model
 model = load_model('skin_cancer_model.h5', compile=False)
 
@@ -39,22 +37,22 @@ def predict():
     
     try:
         # Load and preprocess the image
-        image_bytes = file.stream
-        image = io.BytesIO(image_bytes)
+        image = Image.open(file).convert("RGB")
+        image = image.resize((224, 224))
+        image = img_to_array(image)
+        image = np.expand_dims(image, axis=0)
 
-        img = tf.keras.utils.load_img(image, target_size=(height, width))
-        
-        img_array = tf.keras.utils.img_to_array(img)
-        img_array = tf.expand_dims(img_array, 0)
-        predictions = model.predict(img_array)
-        score = tf.nn.softmax(predictions[0])
-        clase = class_names[np.argmax(score)]
-        points = 100 * np.max(score)
+        # Make prediction
+        predictions = model.predict(image)
+        print("Raw predictions:", predictions)  # Debug: Print raw predictions
+        predicted_class_index = np.argmax(predictions[0])
+        class_name = class_names[predicted_class_index]
+        confidence = float(predictions[0][predicted_class_index])
 
         # Return the result
         return jsonify({
-            'prediction': clase,
-            'confidence': points
+            'prediction': class_name,
+            'confidence': confidence
         })
 
     except Exception as e:
