@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+  <h1>Image Prediction App</h1>
+
+  <!-- Tab buttons -->
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Upload')">Upload Images</button>
+    <button class="tablinks" onclick="openTab(event, 'Camera')">Camera</button>
+  </div>
+
+  <!-- Tab content for "Upload Images" -->
+  <div id="Upload" class="tabcontent">
+    <h2>Upload Multiple Images</h2>
+    <input type="file" id="imageUpload" accept="image/*" multiple>
+    <button onclick="uploadImages()">Predict for Uploaded Images</button>
+    <div id="uploadResults"></div>
+  </div>
+
+  <!-- Tab content for "Camera" -->
+  <div id="Camera" class="tabcontent">
+    <h2>Real-Time Prediction with Camera</h2>
+    <video id="webcam" autoplay playsinline width="224" height="224"></video>
+    <button onclick="captureAndPredict()">Capture and Predict</button>
+    <p id="cameraResult">Prediction: -</p>
+  </div>
+
+  <!-- Link external JavaScript -->
+  <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+
+</html>
