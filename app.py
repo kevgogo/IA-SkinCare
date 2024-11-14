@@ -36,24 +36,19 @@ def predict():
     file = request.files['file']
     
     try:
-        # Load and preprocess the image
-        image = Image.open(file.stream)
-        image = image.convert("RGB")
+        image = Image.open(file)
         image = image.resize((224, 224))
         image = img_to_array(image)
-        image = np.expand_dims(image, axis=0)
+        image = np.expand_dims(image, axis=0) / 255.0
 
-        # Make prediction
-        predictions = model.predict(image)
-        print("Raw predictions:", predictions)  # Debug: Print raw predictions
-        predicted_class_index = np.argmax(predictions[0])
-        class_name = class_names[predicted_class_index]
-        confidence = float(predictions[0][predicted_class_index])
+        predictions = model.predict(image)[0]
 
-        # Return the result
+        # Lista de todas las predicciones
+        prediction_list = [{'class': class_names[i], 'confidence': float(pred)} for i, pred in enumerate(predictions)]
+
+        # Devolver el listado de predicciones
         return jsonify({
-            'prediction': class_name,
-            'confidence': confidence
+            'predictions': prediction_list
         })
 
     except Exception as e:
