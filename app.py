@@ -37,7 +37,8 @@ def predict():
     
     try:
         # Load and preprocess the image
-        image = Image.open(file).convert("RGB")
+        image = Image.open(file.stream)
+        image = image.convert("RGB")
         image = image.resize((224, 224))
         image = img_to_array(image)
         image = np.expand_dims(image, axis=0)
